@@ -28,8 +28,8 @@ Because of Raspberry PI has 3.3V logic and APA102 LED stripes has 5V you need le
     "accessories": [
         {
             "accessory": "LedStrip",
-            "name": "Led pas",
-            "ledstrip_name": "ledky",
+            "name": "LED strip",
+            "ledstrip_name": "LED strip in living room",
             "ledCount": 310,
             "dataPin": 23,
             "clockPin": 24
