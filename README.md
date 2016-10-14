@@ -8,7 +8,9 @@ If you need RGB version just fork this repo and make it RGB, it should be easy. 
 
 Because of Raspberry PI has 3.3V logic and APA102 LED stripes has 5V you need level shifter. I used 74HCT125 wired as follows: 
 
+![Breadboard](https://github.com/topas/homebridge-rpi-apa102-white/blob/master/wiring/rpi_apa102_bb.png)
 
+![Scheme](https://github.com/topas/homebridge-rpi-apa102-white/blob/master/wiring/rpi_apa102_schema.png)
 
 ## Homebridge configuration 
 
