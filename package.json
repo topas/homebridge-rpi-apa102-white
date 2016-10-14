@@ -1,0 +1,25 @@
+{
+  "name": "homebridge-rpi-apa102-white",
+  "version": "0.0.2",
+  "description": "Homebridge plugin for white only (not RGB) APA102 LED strip on Raspberry PI connected via GPIO (not SPI)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/topas/homebridge-rpi-apa102-white.git"
+  },
+  "author": "Tomas Pastorek",
+  "license": "ISC", 
+  "keywords": [
+    "homebridge-plugin"
+  ],
+  "dependencies": {
+  	"rpio": "^0.9.12 "
+  },
+  "engines": {
+    "node": ">=0.12.0",
+    "homebridge": ">=0.2.0"
+  }
+}
