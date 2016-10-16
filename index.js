@@ -12,7 +12,8 @@ function LedStripAccessory(log, config) {
   this.log = log;
   this.name = config["name"];
   this.ledStripName = config["ledstrip_name"] || this.name; // fallback to "name" if you didn't specify an exact "ledstrip_name"
-  this.binaryState = 0; // default state is OFF
+  this.powerState = 0; // default state is OFF
+  this.brightness = 50; // default is half of power
   this.dataPin = config["dataPin"] || 23
   this.clockPin = config["clockPin"] || 24
   this.ledCount = config["ledCount"] || 300
@@ -45,11 +46,11 @@ LedStripAccessory.prototype.writeZeroBytes = function(count) {
   }
 }
 
-LedStripAccessory.prototype.setBrightness = function(brightness) {
+LedStripAccessory.prototype.setStripBrightness = function(brightness) {
 
   this.writeZeroBytes(4); // header
 
-  var globalBrightness = 8;
+  var globalBrightness = 255;
 
   for(var i = 0; i < this.ledCount; i++) {
     this.writeByte(0b11100000 | globalBrightness);
@@ -62,19 +63,35 @@ LedStripAccessory.prototype.setBrightness = function(brightness) {
 }
 
 LedStripAccessory.prototype.getPowerOn = function(callback) {
-  var powerOn = this.binaryState > 0;
-  this.log("Power state for the '%s' is %s", this.ledStripName, this.binaryState);
+  var powerOn = this.powerState > 0;
+  this.log("Getting power state for the '%s' is %s", this.ledStripName, this.powerState);
   callback(null, powerOn);
 }
 
 LedStripAccessory.prototype.setPowerOn = function(powerOn, callback) {
-  this.binaryState = powerOn ? 1 : 0; 
-  if (this.binaryState == 1) {
-    this.setBrightness(128);
+  this.powerState = powerOn ? 1 : 0; 
+  if (this.powerState == 1) {
+    this.setStripBrightness(this.convertBrightnessLevelToStrip(this.brightness));
   } else {
-    this.setBrightness(0);
+    this.setStripBrightness(0);
   }
-  this.log("Set power state on the '%s' to %s", this.ledStripName, this.binaryState);
+  this.log("Set power state on the '%s' to %s", this.ledStripName, this.powerState);
+  callback(null);
+}
+
+LedStripAccessory.prototype.getBrightness = function(callback) { 
+  this.log("Getting brightness for the '%s' is %s", this.ledStripName, this.brightness);
+  callback(null, this.brightness);
+}
+
+LedStripAccessory.prototype.convertBrightnessLevelToStrip = function(level) {
+  return Math.round(2.55*this.brightness);
+} 
+
+LedStripAccessory.prototype.setBrightness = function(level, callback) { 
+  this.brightness = level; 
+  this.log("Set brightness on the '%s' to %s", this.ledStripName, this.brightness); 
+  this.setStripBrightness(this.convertBrightnessLevelToStrip(this.brightness));
   callback(null);
 }
 
@@ -85,6 +102,11 @@ LedStripAccessory.prototype.getServices = function() {
       .getCharacteristic(Characteristic.On)
       .on('get', this.getPowerOn.bind(this))
       .on('set', this.setPowerOn.bind(this));
+
+    lightbulbService
+      .addCharacteristic(new Characteristic.Brightness())
+      .on('get', this.getBrightness.bind(this))
+      .on('set', this.setBrightness.bind(this));
     
     return [lightbulbService];
 }
